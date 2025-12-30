@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>روزنامه‌های روز — pishkhan.com</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #2c3e50, #4a6491);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .card {
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            height: 100%;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            }
+
+        .card-img-top {
+            cursor: pointer;
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.3s;
+            background: linear-gradient(45deg, #f5f5f5 25%, #e0e0e0 25%, #e0e0e0 50%, #f5f5f5 50%, #f5f5f5 75%, #e0e0e0 75%, #e0e0e0);
+            background-size: 20px 20px;
+        }
+
+            .card-img-top:hover {
+                transform: scale(1.02);
+            }
+
+        .modal-xl {
+            max-width: 95%;
+        }
+
+        .countdown {
+            font-size: 1.2rem;
+            color: #d9534f;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 10px;
+            background: #fff3cd;
+            border-radius: 5px;
+            border: 1px solid #ffeaa7;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .date-input-container {
+            max-width: 400px;
+            margin: 0 auto 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        #status {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .pdf-iframe {
+            width: 100%;
+            height: 0;
+            border: none;
+            transition: height 0.5s ease;
+            display: block;
+            border-radius: 5px;
+        }
+
+            .pdf-iframe.loaded {
+                height: 80vh;
+                min-height: 500px;
+                max-height: 800px;
+            }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            border: none;
+            padding: 8px 16px;
+        }
+
+        .badge {
+            font-size: 0.8em;
+            padding: 4px 8px;
+        }
+
+        .available-badge {
+            background: #28a745;
+        }
+
+        .unavailable-badge {
+            background: #6c757d;
+        }
+
+        .stats {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(45deg, #f0f0f0 25%, #e0e0e0 25%, #e0e0e0 50%, #f0f0f0 50%, #f0f0f0 75%, #e0e0e0 75%, #e0e0e0);
+            background-size: 20px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+        }
+
+        .retry-btn {
+            margin-top: 10px;
+        }
+
+        .speed-optimized {
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            color: #2e7d32;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+
+        .newspaper-count {
+            font-weight: bold;
+            color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header text-center">
+            <h1><i class="fas fa-newspaper me-2"></i>روزنامه‌های روز — بهینه‌سازی سرعت</h1>
+            <p class="mb-0">نمایش سریع تمام روزنامه‌های ایرانی از pishkhan.com</p>
+        </div>
+
+        <div class="date-input-container">
+            <div class="speed-optimized">
+                <i class="fas fa-bolt me-2"></i>
+                <small>سیستم بهینه‌سازی شده — بررسی <span class="newspaper-count">80+</span> روزنامه در کمتر از 20 ثانیه</small>
+            </div>
+
+            <label for="jalaliDate" class="form-label fw-bold mt-2">
+                <i class="fas fa-calendar-alt me-2"></i>انتخاب تاریخ
+            </label>
+            <div class="input-group">
+                <input type="text"
+                       id="jalaliDate"
+                       class="form-control text-center"
+                       placeholder="1404/10/08"
+                       value="1404/10/08" />
+                <button class="btn btn-primary" onclick="loadNewspapers()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <small class="form-text text-muted">مثال: 1404/10/08 (پربازدیدترین تاریخ — سریع‌ترین لود)</small>
+        </div>
+
+        <div id="stats" class="stats text-center"></div>
+
+        <div id="status" class="loading">
+            <i class="fas fa-spinner fa-spin me-2"></i>آماده دریافت روزنامه‌ها...
+        </div>
+
+        <div id="newspaperCards" class="row"></div>
+    </div>
+
+    <!-- Image Zoom Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">پیش‌نمایش روزنامه</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div id="imageContainer" style="min-height: 500px; display: flex; align-items: center; justify-content: center;">
+                        <img id="modalImage" src="" class="img-fluid rounded" style="max-height: 80vh;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Viewer Modal -->
+    <div class="modal fade" id="pdfModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pdfModalLabel">روزنامه کامل</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="countdownContainer" class="text-center countdown">
+                        <i class="fas fa-hourglass-half me-2"></i>
+                        <span>در حال آماده‌سازی...</span>
+                    </div>
+                    <iframe id="pdfFrame" class="pdf-iframe"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // متغیرهای global
+        const dateInput = document.getElementById('jalaliDate');
+        const cardsContainer = document.getElementById('newspaperCards');
+        const statusEl = document.getElementById('status');
+        const statsEl = document.getElementById('stats');
+        let newspapersCache = {}; // کش روزنامه‌ها بر اساس تاریخ
+
+        // فرمت‌کردن تاریخ (حذف اسلش)
+        function formatDate(shamsiDate) {
+            return shamsiDate.replace(/\//g, '');
+        }
+
+        // اعتبارسنجی تاریخ شمسی
+        function isValidJalaliDate(dateStr) {
+            const regex = /^(\d{4})\/(0?[1-9]|1[0-2])\/(0?[1-9]|[12]\d|3[01])$/;
+            return regex.test(dateStr);
+        }
+
+        // ایجاد URL تصویر درست
+        function createCorrectImageUrl(latinName, dateFormatted) {
+            const year = dateFormatted.substring(0, 4);
+            const month = dateFormatted.substring(4, 6);
+            return `https://www.pishkhan.com/Archive/${year}/${month}/${dateFormatted}/${latinName}.jpg`;
+        }
+
+        // ایجاد URL PDF
+        function createPdfUrl(latinName, dateFormatted) {
+            return `https://www.pishkhan.com/pdfviewer.php?paper=${latinName}&date=${dateFormatted}`;
+        }
+
+        // بررسی وجود تصویر با timeout کوتاه
+        async function checkImageExists(url) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                let loaded = false;
+
+                img.onload = () => {
+                    if (!loaded) {
+                        loaded = true;
+                        resolve(true);
+                    }
+                };
+
+                img.onerror = () => {
+                    if (!loaded) {
+                        loaded = true;
+                        resolve(false);
+                    }
+                };
+
+                // اضافه کردن timestamp برای جلوگیری از کش
+                const cacheBustUrl = url;// + '?t=' + Date.now();
+
+                // تایم‌اوت کوتاه: 1.5 ثانیه
+                setTimeout(() => {
+                    if (!loaded) {
+                        loaded = true;
+                        resolve(false);
+                    }
+                }, 1500);
+
+                img.src = cacheBustUrl;
+            });
+        }
+
+        // دریافت روزنامه‌ها - بهینه‌سازی شده
+        async function fetchNewspapersOptimized(dateFormatted) {
+            const cacheKey = dateFormatted;
+
+            // اگر در کش موجود بود برگردان
+            if (newspapersCache[cacheKey]) {
+                console.log('📦 استفاده از کش روزنامه‌ها');
+                return newspapersCache[cacheKey];
+            }
+
+            statusEl.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>دریافت سریع لیست روزنامه‌ها...';
+
+            try {
+                // لیست کامل روزنامه‌ها از منوی سایت (از کد HTML که دادی)
+                const newspapers = [
+                    { latin: 'ArmanRavabetOmoomi', persian: 'آرمان امروز', hasPdf: true },
+                    { latin: 'ArmanMeli', persian: 'آرمان ملی', hasPdf: true },
+                    { latin: 'Asia', persian: 'آسیا', hasPdf: true },
+                    { latin: 'Agaah', persian: 'آگاه', hasPdf: true },
+                    { latin: 'AbrarNews', persian: 'ابرار', hasPdf: true },
+                    { latin: 'AbrarEghtesadi', persian: 'ابرار اقتصادی', hasPdf: true },
+                    { latin: 'AtrakDaily', persian: 'اترک', hasPdf: true },
+                    { latin: 'AkhbarSanat', persian: 'اخبار صنعت', hasPdf: true },
+                    { latin: 'Azarbaydgan', persian: 'آذربایجان', hasPdf: true },
+                    { latin: 'Etedal', persian: 'اعتدال', hasPdf: true },
+                    { latin: 'Etemaad', persian: 'اعتماد', hasPdf: true },
+                    { latin: 'Eskenas', persian: 'اسکناس', hasPdf: true },
+                    { latin: 'EsfahanEmrooz', persian: 'اصفهان امروز', hasPdf: true },
+                    { latin: 'Afkar', persian: 'افکار', hasPdf: true },
+                    { latin: 'EqtesadAyandeh', persian: 'اقتصاد آینده', hasPdf: true },
+                    { latin: 'EghtesadPooya', persian: 'اقتصاد پویا', hasPdf: true },
+                    { latin: 'EghtesadSaramad', persian: 'اقتصاد سرآمد', hasPdf: true },
+                    { latin: 'EghtesadKish', persian: 'اقتصاد کیش', hasPdf: true },
+                    { latin: 'EghtesadeMardom', persian: 'اقتصاد مردم', hasPdf: true },
+                    { latin: 'EghtesadeMeli', persian: 'اقتصاد ملی', hasPdf: true },
+                    { latin: 'Emrooz', persian: 'امروز', hasPdf: true },
+                    { latin: 'Eidehrooz', persian: 'ایده روز', hasPdf: true },
+                    { latin: 'BakhtarDaily', persian: 'باختر', hasPdf: true },
+                    { latin: 'BazarKasbkar', persian: 'بازار کسب و کار', hasPdf: true },
+                    { latin: 'SepidarNews', persian: 'پیام سپیدار', hasPdf: true },
+                    { latin: 'PayameAsalooye', persian: 'پیام عسلویه', hasPdf: true },
+                    { latin: 'PayameMa', persian: 'پیام ما', hasPdf: true },
+                    { latin: 'Pishro', persian: 'پیشرو', hasPdf: true },
+                    { latin: 'TejaratOnline', persian: 'تجارت', hasPdf: true },
+                    { latin: 'Servat', persian: 'ثروت', hasPdf: true },
+                    { latin: 'JaameJam', persian: 'جام جم', hasPdf: true },
+                    { latin: 'Jahan-e-Eghtesad', persian: 'جهان اقتصاد', hasPdf: true },
+                    { latin: 'JahanSanat', persian: 'جهان صنعت', hasPdf: true },
+                    { latin: 'Javan', persian: 'جوان', hasPdf: true },
+                    { latin: 'Jomleh', persian: 'جمله', hasPdf: true },
+                    { latin: 'JomhouriEslami', persian: 'جمهوری اسلامی', hasPdf: true },
+                    { latin: 'Khoob', persian: 'خوب', hasPdf: true },
+                    { latin: 'DonyayeEghtesad', persian: 'دنیای اقتصاد', hasPdf: true },
+                    { latin: 'Roozegar', persian: 'روزگار', hasPdf: true },
+                    { latin: 'MadanDaily', persian: 'روزگار معدن', hasPdf: true },
+                    { latin: 'Ruydademrouz', persian: 'رویداد امروز', hasPdf: true },
+                    { latin: 'RooyesheMellat', persian: 'رویش ملت', hasPdf: true },
+                    { latin: 'SetarehSobh', persian: 'ستاره صبح', hasPdf: true },
+                    { latin: 'SepehrIranian', persian: 'سپهر ایرانیان', hasPdf: true },
+                    { latin: 'SiasatRuz', persian: 'سیاست روز', hasPdf: true },
+                    { latin: 'Shargh', persian: 'شرق', hasPdf: true },
+                    { latin: 'Shorou', persian: 'شروع', hasPdf: true },
+                    { latin: 'SobheEmrooz', persian: 'صبح امروز', hasPdf: true },
+                    { latin: 'SobhSahel', persian: 'صبح ساحل', hasPdf: true },
+                    { latin: 'SedayeEslahat', persian: 'صدای اصلاحات', hasPdf: true },
+                    { latin: 'SedayeIran', persian: 'صدای ایران', hasPdf: true },
+                    { latin: 'GostareshSMT', persian: 'صمت', hasPdf: true },
+                    { latin: 'AsreEsfahan', persian: 'عصر اصفهان', hasPdf: true },
+                    { latin: 'AsreIranian', persian: 'عصر ایرانیان', hasPdf: true },
+                    { latin: 'AsreTosee', persian: 'عصر توسعه', hasPdf: true },
+                    { latin: 'AsreRasaneh', persian: 'عصر رسانه', hasPdf: true },
+                    { latin: 'AsrGhanoon', persian: 'عصر قانون', hasPdf: true },
+                    { latin: 'Fogholadeh', persian: 'فوق العاده', hasPdf: true },
+                    { latin: 'Ghods', persian: 'قدس', hasPdf: true },
+                    { latin: 'KarvaKargar', persian: 'کار و کارگر', hasPdf: true },
+                    { latin: 'KayhanNews', persian: 'کیهان', hasPdf: true },
+                    { latin: 'KimiaVatan', persian: 'کیمیای وطن', hasPdf: true },
+                    { latin: 'MardomSalari', persian: 'مردم سالاری', hasPdf: true },
+                    { latin: 'Movajehe', persian: 'مواجهه اقتصادی', hasPdf: true },
+                    { latin: 'MahdTamadon', persian: 'مهد تمدن', hasPdf: true },
+                    { latin: 'NaghshDaily', persian: 'نقش اقتصاد', hasPdf: true },
+                    { latin: 'NesfeJahan', persian: 'نصف جهان', hasPdf: true },
+                    { latin: 'HadafEconomic', persian: 'هدف و اقتصاد', hasPdf: true },
+                    { latin: 'Honarmand', persian: 'هنرمند', hasPdf: true },
+                    { latin: 'YadegarEmrooz', persian: 'یادگار امروز', hasPdf: true },
+                    { latin: 'YaghoutVatan', persian: 'یاقوت وطن', hasPdf: true },
+                    { latin: 'AbrarSport', persian: 'ابرار ورزشى', hasPdf: true },
+                    { latin: 'KhabarVarzeshi', persian: 'خبر ورزشی', hasPdf: true },
+                    { latin: 'Shoot', persian: 'شوت', hasPdf: true },
+                    { latin: 'Footballs', persian: 'فوتبالز', hasPdf: true },
+                    { latin: 'Gol', persian: 'گل', hasPdf: true }
+                ];
+
+                console.log(`✅ لیست کامل ${newspapers.length} روزنامه آماده است`);
+
+                // ذخیره در کش
+                newspapersCache[cacheKey] = newspapers;
+                return newspapers;
+
+            } catch (error) {
+                console.error('خطا در دریافت لیست:', error);
+                throw new Error('امکان دریافت لیست روزنامه‌ها وجود ندارد');
+            }
+        }
+
+        // ایجاد کارت روزنامه
+        function renderNewspaperCard(newspaper, dateFormatted, exists, imageUrl) {
+            const { latin, persian, hasPdf } = newspaper;
+            const pdfUrl = createPdfUrl(latin, dateFormatted);
+
+            const col = document.createElement('div');
+            col.className = 'col-md-6 col-lg-4 col-xl-3';
+
+            if (exists) {
+                col.innerHTML = `
+                        <div class="card h-100">
+                            <div class="position-relative">
+                                <img src="${imageUrl}"
+                                     class="card-img-top"
+                                     alt="${persian}"
+                                     loading="lazy"
+                                     onerror="handleImageError(this, '${persian}', '${imageUrl}')"
+                                     onclick="showImageModal('${imageUrl}', '${persian}')">
+                                <span class="position-absolute top-0 start-0 badge available-badge m-2">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                            </div>
+                            <div class="card-body text-center d-flex flex-column">
+                                <h5 class="card-title mb-1">${persian}</h5>
+                                <small class="text-muted mb-2">
+                                    <i class="fas fa-calendar me-1"></i>${dateInput.value}
+                                </small>
+                                <div class="mt-auto">
+                                    <button class="btn btn-outline-secondary btn-sm w-100 mb-1"
+                                            onclick="showImageModal('${imageUrl}', '${persian}')"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#imageModal">
+                                        <i class="fas fa-search-plus me-1"></i>نمایش بزرگ
+                                    </button>
+                                    ${hasPdf ? `
+                                    <button class="btn btn-primary btn-sm w-100"
+                                            onclick="showPdfModal('${pdfUrl}', '${persian}')">
+                                        <i class="fas fa-file-pdf me-1"></i>مشاهده PDF
+                                    </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+            } else {
+                col.innerHTML = `
+                        <div class="card h-100">
+                            <div class="image-placeholder">
+                                <div class="text-center">
+                                    <i class="fas fa-times-circle fa-2x mb-2 text-muted"></i>
+                                    <div class="fw-bold">${persian}</div>
+                                    <small class="text-muted">منتشر نشده</small>
+                                </div>
+                            </div>
+                            <div class="card-body text-center d-flex flex-column justify-content-center">
+                                <h5 class="card-title">${persian}</h5>
+                                <p class="text-muted mb-2 small">
+                                    این روزنامه برای این تاریخ منتشر نشده است
+                                </p>
+                            </div>
+                        </div>
+                    `;
+            }
+
+            cardsContainer.appendChild(col);
+            return col;
+        }
+
+        // مدیریت خطای تصویر
+        window.handleImageError = function (img, title, imageUrl) {
+            const card = img.closest('.card');
+            if (!card) return;
+
+            const placeholder = card.querySelector('.image-placeholder') || document.createElement('div');
+            placeholder.className = 'image-placeholder';
+            placeholder.innerHTML = `
+                    <div class="text-center">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-2 text-warning"></i>
+                        <div class="fw-bold">${title}</div>
+                        <small class="text-muted">خطا در بارگذاری</small>
+                    </div>
+                `;
+
+            img.style.display = 'none';
+            if (!card.querySelector('.image-placeholder')) {
+                img.parentElement.appendChild(placeholder);
+            }
+        };
+
+        // بررسی سریع تصاویر با روش بهینه
+        async function checkImagesQuickly(newspapers, dateFormatted, onProgress) {
+            const results = [];
+            const total = newspapers.length;
+
+            // دسته‌بندی بزرگ برای پردازش سریع
+            const batchSize = 15; // 15 تصویر همزمان!
+            const imagePromises = [];
+
+            for (let i = 0; i < total; i += batchSize) {
+                const batch = newspapers.slice(i, i + batchSize);
+
+                // ایجاد promise برای هر دسته
+                const batchPromise = (async (batchStartIndex) => {
+                    const batchPromises = batch.map((newspaper, index) => {
+                        const currentIndex = batchStartIndex + index;
+
+                        // به روز رسانی پیشرفت
+                        if (onProgress && currentIndex % 5 === 0) {
+                            setTimeout(() => {
+                                onProgress(currentIndex + 1, total);
+                            }, 0);
+                        }
+
+                        const imageUrl = createCorrectImageUrl(newspaper.latin, dateFormatted);
+                        return checkImageExists(imageUrl)
+                            .then(exists => ({ newspaper, exists, imageUrl }));
+                    });
+
+                    return Promise.all(batchPromises);
+                })(i);
+
+                imagePromises.push(batchPromise);
+
+                // توقف کوتاه بین دسته‌ها
+                if (i + batchSize < total) {
+                    await new Promise(resolve => setTimeout(resolve, 50));
+                }
+            }
+
+            // جمع‌آوری تمام نتایج
+            const allBatches = await Promise.all(imagePromises);
+            allBatches.forEach(batchResults => {
+                results.push(...batchResults);
+            });
+
+            return results;
+        }
+
+        // تابع اصلی بارگذاری - بهینه‌سازی شده
+        async function loadNewspapers() {
+            const dateStr = dateInput.value.trim();
+
+            if (!isValidJalaliDate(dateStr)) {
+                alert('⚠️ فرمت تاریخ صحیح نیست. لطفاً تاریخ شمسی معتبر وارد کنید.\nمثال: 1404/10/08');
+                dateInput.focus();
+                return;
+            }
+
+            cardsContainer.innerHTML = '';
+            statsEl.innerHTML = '';
+            const dateFormatted = formatDate(dateStr);
+
+            statusEl.className = 'loading';
+            statusEl.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>در حال بارگذاری سریع روزنامه‌ها...';
+
+            const startTime = Date.now();
+
+            try {
+                // دریافت لیست روزنامه‌ها
+                const newspapers = await fetchNewspapersOptimized(dateFormatted);
+
+                if (newspapers.length === 0) {
+                    throw new Error('هیچ روزنامه‌ای پیدا نشد');
+                }
+
+                // نمایش تعداد روزنامه‌ها
+                statusEl.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>بررسی سریع ${newspapers.length} روزنامه...`;
+
+                // ایجاد نوار پیشرفت
+                const progressContainer = document.createElement('div');
+                progressContainer.className = 'mb-3';
+                progressContainer.innerHTML = `
+                        <div class="alert alert-info">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span id="progressText">آماده‌سازی: 0/${newspapers.length}</span>
+                                <span id="progressPercent">0%</span>
+                            </div>
+                            <div class="progress" style="height: 10px;">
+                                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated"
+                                     style="width: 0%"></div>
+                            </div>
+                        </div>
+                    `;
+                statusEl.parentNode.insertBefore(progressContainer, statusEl.nextSibling);
+
+                let availableCount = 0;
+                let unavailableCount = 0;
+
+                // تابع به روز رسانی پیشرفت
+                const updateProgress = (current, total) => {
+                    const progressPercent = Math.round((current / total) * 100);
+                    document.getElementById('progressBar').style.width = `${progressPercent}%`;
+                    document.getElementById('progressPercent').textContent = `${progressPercent}%`;
+                    document.getElementById('progressText').textContent =
+                        `بررسی تصاویر: ${current}/${total}`;
+                };
+
+                // بررسی سریع تصاویر
+                const imageResults = await checkImagesQuickly(newspapers, dateFormatted, updateProgress);
+
+                // رندر کارت‌ها به صورت گروهی
+                const renderBatchSize = 20;
+                for (let i = 0; i < imageResults.length; i += renderBatchSize) {
+                    const batch = imageResults.slice(i, i + renderBatchSize);
+
+                    batch.forEach(result => {
+                        const { newspaper, exists, imageUrl } = result;
+                        renderNewspaperCard(newspaper, dateFormatted, exists, imageUrl);
+
+                        if (exists) {
+                            availableCount++;
+                        } else {
+                            unavailableCount++;
+                        }
+                    });
+
+                    // به روز رسانی UI
+                    updateProgress(Math.min(i + renderBatchSize, imageResults.length), imageResults.length);
+
+                    // اجازه دهید UI بروز شود
+                    await new Promise(resolve => setTimeout(resolve, 10));
+                }
+
+                // حذف نوار پیشرفت
+                progressContainer.remove();
+
+                // محاسبه زمان اجرا
+                const endTime = Date.now();
+                const executionTime = ((endTime - startTime) / 1000).toFixed(1);
+
+                // نمایش آمار
+                statsEl.innerHTML = `
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                <strong>تاریخ:</strong> ${dateStr}
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <strong>موجود:</strong> ${availableCount}
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <i class="fas fa-times-circle text-secondary me-2"></i>
+                                <strong>ناموجود:</strong> ${unavailableCount}
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <i class="fas fa-clock me-2"></i>
+                                <strong>زمان:</strong> ${executionTime} ثانیه
+                            </div>
+                        </div>
+                    `;
+
+                statusEl.className = 'success';
+                statusEl.innerHTML = `
+                        <i class="fas fa-check-circle me-2"></i>
+                        ✅ بارگذاری کامل شد! ${newspapers.length} روزنامه در ${executionTime} ثانیه بررسی شدند.
+                        <div class="mt-2">
+                            <span class="text-success">${availableCount} روزنامه منتشر شده</span> |
+                            <span class="text-secondary">${unavailableCount} روزنامه منتشر نشده</span>
+                        </div>
+                        <div class="mt-2 small">
+                            <a href="https://www.pishkhan.com/all?date=${dateFormatted}" target="_blank" class="text-decoration-none">
+                                <i class="fas fa-external-link-alt me-1"></i>مشاهده در سایت اصلی
+                            </a>
+                        </div>
+                    `;
+
+            } catch (error) {
+                console.error('خطا:', error);
+                statusEl.className = 'error';
+                statusEl.innerHTML = `
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        خطا: ${error.message}
+                        <div class="mt-2 retry-btn">
+                            <button class="btn btn-sm btn-outline-warning" onclick="loadNewspapers()">
+                                <i class="fas fa-redo me-1"></i>تلاش مجدد
+                            </button>
+                        </div>
+                    `;
+            }
+        }
+
+        // نمایش مودال تصویر
+        window.showImageModal = function (imageUrl, title) {
+            const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+            const imageContainer = document.getElementById('imageContainer');
+
+            imageContainer.innerHTML = `
+                    <div class="text-center">
+                        <div class="loading-spinner mb-3" style="width: 40px; height: 40px;"></div>
+                        <div>در حال بارگذاری تصویر...</div>
+                    </div>
+                `;
+
+            const img = new Image();
+            img.className = 'img-fluid rounded';
+            img.style.maxHeight = '80vh';
+
+            img.onload = function () {
+                imageContainer.innerHTML = '';
+                imageContainer.appendChild(img);
+            };
+
+            img.onerror = function () {
+                imageContainer.innerHTML = `
+                        <div class="text-center">
+                            <i class="fas fa-exclamation-triangle fa-4x text-warning mb-3"></i>
+                            <h5>خطا در بارگذاری تصویر</h5>
+                            <p class="text-muted">تصویر "${title}" قابل بارگذاری نیست</p>
+                            <div class="mt-3">
+                                <button class="btn btn-outline-primary"
+                                        onclick="window.open('${imageUrl}', '_blank')">
+                                    <i class="fas fa-external-link-alt me-1"></i>مشاهده مستقیم
+                                </button>
+                            </div>
+                        </div>
+                    `;
+            };
+
+            img.src = imageUrl + '?t=' + Date.now();
+            document.getElementById('imageModalLabel').textContent = title;
+
+            modal.show();
+        };
+
+        // نمایش مودال PDF
+        // تابع ساده‌تر برای بررسی PDF
+        async function verifyPdfExists(pdfUrl) {
+            // استخراج paper و date از URL
+            const url = new URL(pdfUrl);
+            const paper = url.searchParams.get('paper');
+            const date = url.searchParams.get('date');
+
+            if (!paper || !date) return false;
+
+            try {
+                const workerUrl = `https://your-worker.your-subdomain.workers.dev/?paper=${paper}&date=${date}`;
+                const res = await fetch(workerUrl);
+                const data = await res.json();
+                return data.hasPdf === true;
+            } catch (err) {
+                console.warn('Worker check failed, falling back to image check:', err);
+                return false;
+            }
+        }
+        // تابع بهینه‌شده نمایش PDF
+        window.showPdfModal = async function (pdfUrl, title) {
+            const modal = new bootstrap.Modal(document.getElementById('pdfModal'));
+            const frame = document.getElementById('pdfFrame');
+            const countdownEl = document.getElementById('countdownContainer');
+
+            document.getElementById('pdfModalLabel').textContent = title;
+
+            // نمایش وضعیت اولیه
+            countdownEl.classList.remove('hidden');
+            countdownEl.innerHTML = `
+        <div class="text-center">
+            <div class="loading-spinner mb-2" style="width: 30px; height: 30px; margin: 0 auto;"></div>
+            <div>در حال بررسی فایل PDF...</div>
+        </div>
+    `;
+
+            modal.show();
+
+            // بررسی وجود PDF
+            const pdfExists = await verifyPdfExists(pdfUrl);
+
+            if (!pdfExists) {
+                countdownEl.innerHTML = `
+            <div class="alert alert-warning text-center">
+                <i class="fas fa-file-excel fa-2x mb-3 text-warning"></i>
+                <h5>فایل PDF یافت نشد</h5>
+                <p class="mb-2">فایل PDF روزنامه "${title}" موجود نیست.</p>
+                <div class="mt-3">
+                    <button class="btn btn-outline-primary btn-sm me-2"
+                            onclick="window.open('${pdfUrl}', '_blank')">
+                        <i class="fas fa-external-link-alt me-1"></i>بررسی دستی
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm"
+                            data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>بستن
+                    </button>
+                </div>
+            </div>
+        `;
+                frame.src = '';
+                return;
+            }
+
+            // اگر PDF موجود است، ادامه بده
+            countdownEl.innerHTML = `
+        <div class="text-center">
+            <i class="fas fa-check-circle fa-2x mb-3 text-success"></i>
+            <div>فایل PDF موجود است</div>
+            <div class="small text-muted">در حال بارگذاری...</div>
+        </div>
+    `;
+
+            // بارگذاری PDF با timeout
+            const timestampedUrl = pdfUrl + (pdfUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
+            frame.src = timestampedUrl;
+
+            let loaded = false;
+            let sec = 10;
+
+            const updateUI = () => {
+                if (!loaded) {
+                    countdownEl.innerHTML = `
+                <div class="text-center">
+                    <div class="loading-spinner mb-2" style="width: 20px; height: 20px; margin: 0 auto;"></div>
+                    <div>در حال بارگذاری PDF</div>
+                    <div class="small text-muted">${sec} ثانیه باقی مانده</div>
+                </div>
+            `;
+                    sec--;
+
+                    if (sec < 0) {
+                        // بعد از 5 ثانیه، فرض کن بارگذاری شده
+                        loaded = true;
+                        countdownEl.classList.add('hidden');
+                        frame.classList.add('loaded');
+                    }
+                }
+            };
+
+            updateUI();
+            const timer = setInterval(updateUI, 1000);
+
+            // وقتی iframe بارگذاری شد
+            frame.onload = function () {
+                if (!loaded) {
+                    loaded = true;
+                    clearInterval(timer);
+                    countdownEl.classList.add('hidden');
+                    frame.classList.add('loaded');
+                }
+            };
+
+            // در صورت خطا
+            frame.onerror = function () {
+                clearInterval(timer);
+                countdownEl.classList.remove('hidden');
+                countdownEl.innerHTML = `
+            <div class="alert alert-danger text-center">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                خطا در بارگذاری PDF
+            </div>
+        `;
+            };
+
+            // ریست هنگام بسته شدن
+            const modalElement = document.getElementById('pdfModal');
+            const resetModal = () => {
+                clearInterval(timer);
+                frame.src = '';
+                frame.classList.remove('loaded');
+                countdownEl.classList.remove('hidden');
+                countdownEl.innerHTML = `<i class="fas fa-hourglass-half me-2"></i><span>در حال آماده‌سازی...</span>`;
+                modalElement.removeEventListener('hidden.bs.modal', resetModal);
+            };
+
+            modalElement.addEventListener('hidden.bs.modal', resetModal);
+        };
+        // رویدادها
+        dateInput.addEventListener('change', loadNewspapers);
+        dateInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') loadNewspapers();
+        });
+
+        // دکمه‌های تاریخ سریع
+        function addQuickDateButtons() {
+            const container = document.createElement('div');
+            container.className = 'd-flex justify-content-center gap-2 mt-3 flex-wrap';
+
+            const dates = [
+                { label: '🚀 سریع‌ترین', date: '1404/10/08' },
+                { label: '📅 امروز', date: getTodayJalali() },
+                { label: '📅 دیروز', date: getYesterdayJalali() },
+                { label: '🎉 اول سال', date: '1404/01/01' },
+                { label: '🧪 آزمایش', date: '1403/12/29' }
+            ];
+
+            dates.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-outline-success btn-sm';
+                btn.innerHTML = `${item.label}`;
+                btn.onclick = () => {
+                    dateInput.value = item.date;
+                    loadNewspapers();
+                };
+                container.appendChild(btn);
+            });
+
+            dateInput.parentNode.parentNode.appendChild(container);
+        }
+
+        // توابع تاریخ
+        function getTodayJalali() {
+            const today = new Date();
+            const jalaliYear = 1403 + (today.getFullYear() - 2024);
+            const month = today.getMonth() + 1;
+            const day = today.getDate();
+            return `${jalaliYear}/${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}`;
+        }
+
+        function getYesterdayJalali() {
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const jalaliYear = 1403 + (yesterday.getFullYear() - 2024);
+            const month = yesterday.getMonth() + 1;
+            const day = yesterday.getDate();
+            return `${jalaliYear}/${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}`;
+        }
+
+        // بارگذاری اولیه
+        window.onload = function () {
+            addQuickDateButtons();
+            setTimeout(() => loadNewspapers(), 300);
+        };
+    </script>
+
+</body>
+</html>
